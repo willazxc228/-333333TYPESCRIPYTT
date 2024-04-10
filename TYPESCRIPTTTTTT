@@ -1,0 +1,63 @@
+interface Logger {
+  log(message: string): void;
+}
+
+class LogToConsole implements Logger {
+  log(message: string): void {
+    console.log(message);
+  }
+}
+
+class Plotter {
+  private logger: Logger;
+  private color: string;
+  private isCarriageDown: boolean;
+  private position: { x: number; y: number };
+  
+  constructor(logger: Logger) {
+    this.logger = logger;
+    this.color = 'Black';
+    this.isCarriageDown = false;
+    this.position = { x: 0, y: 0 };
+  }
+
+  setColor(color: string): void {
+    this.color = color;
+    this.logger.log(Устанавливаем ${color.toLowerCase()} цвет линии.);
+  }
+
+  carriageDown(): void {
+    this.isCarriageDown = true;
+    this.logger.log('Опускаем каретку');
+  }
+
+  carriageUp(): void {
+    this.isCarriageDown = false;
+    this.logger.log('Поднимаем каретку');
+  }
+
+  move(distance: number): void {
+    const newPosition = { x: this.position.x + distance, y: this.position.y };
+    if (this.isCarriageDown) {
+      this.logger.log(Чертим линию из (${this.position.x}, ${this.position.y}) в (${newPosition.x}, ${newPosition.y}) используя ${this.color.toLowerCase()} цвет.);
+    }
+    this.position = newPosition;
+  }
+
+  turn(angle: number): void {
+    this.logger.log(Поворачиваем на ${angle} градусов);
+  }
+}
+
+function drawTriangle(plt: Plotter, size: number): void {
+  plt.setColor('Green');
+  for (let i = 0; i < 3; ++i) {
+    plt.carriageDown();
+    plt.move(size);
+    plt.carriageUp();
+    plt.turn(120.0);
+  }
+}
+
+const plotter = new Plotter(new LogToConsole());
+drawTriangle(plotter, 100.0);
